@@ -108,7 +108,7 @@ export default function Signup() {
                         </H.CardDiv>
                     </H.Content>
                     :
-                    null
+                    <h1>Ola fulano</h1>
                 }
 
             </H.FirstSection>
