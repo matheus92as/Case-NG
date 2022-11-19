@@ -179,6 +179,17 @@ export async function transactionsRoutes(fastify: FastifyInstance) {
                 orderBy: {
                     createdAt: "desc",
                 },
+                include:{
+                    creditedAccount :{
+                        select: {
+                            users: {
+                                select: {
+                                    username: true
+                                }
+                            }
+                        }
+                    }
+                }
             });
 
             return reply.status(201).send(findTransfers);
@@ -204,6 +215,13 @@ export async function transactionsRoutes(fastify: FastifyInstance) {
                 orderBy: {
                     createdAt: "desc",
                 },
+                include:{
+                    debitedAccount :{
+                        select: {
+                            username:true
+                        }
+                    }
+                }
             });
 
             return reply.status(201).send(findTransfers);

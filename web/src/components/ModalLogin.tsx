@@ -7,6 +7,7 @@ import useForm from '../hooks/useForm'
 
 interface Props {
     loginVisible: boolean
+    setLogedIn: Dispatch<SetStateAction<boolean>>
     setLoginVisible: Dispatch<SetStateAction<boolean>>
 }
 
@@ -26,10 +27,12 @@ const ModalLogin = (props: Props) => {
         try {
             const response = await api.post('/users/login', formulario);
             const token = response.data;
+            localStorage.setItem("token", token);
 
             alert('Acesso liberado!');
             limpaInputs();
             props.setLoginVisible(false)
+            props.setLogedIn(true)
 
         } catch (error) {
             alert("Não foi possivel acessar a conta")

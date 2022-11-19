@@ -133,12 +133,15 @@ export async function usersRoutes(fastify: FastifyInstance) {
     }
 
     let dbPassword = "";
+    let userAccountId = "";
 
     if (findUser) {
       dbPassword = findUser.password;
+      userAccountId = findUser.accountId;
     }
 
     const hashCompare = await compare(password, dbPassword);
+    const hashedPassword = await hash(password);
 
     if (!hashCompare) {
       return reply.status(400).send({
@@ -149,7 +152,7 @@ export async function usersRoutes(fastify: FastifyInstance) {
     const token = fastify.jwt.sign(
       {
         username: username,
-        password: password,
+        userAccountId: userAccountId,
       },
       {
         expiresIn: "24 hours",
