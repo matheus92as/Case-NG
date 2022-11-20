@@ -39,7 +39,7 @@ export default function Home() {
   function mascaraMoeda(event: any) {
     const onlyDigits = event.target.value
       .split("")
-      .filter((s:any)=> /\d/.test(s))
+      .filter((s: any) => /\d/.test(s))
       .join("")
       .padStart(3, "0")
     const digitsFloat = onlyDigits.slice(0, -2) + "." + onlyDigits.slice(-2)
@@ -63,11 +63,11 @@ export default function Home() {
         setUserInf(userDBInfs);
 
         if (userDBInfs.userAccountId === undefined) {
-          const account = await api.get(`/users/balance/user/${userDBInfs.username}`);
+          const account = await api.get(`/accounts/balance/user/${userDBInfs.username}`);
           const accountDBInfs: number = account.data.balance;
           setBalance(accountDBInfs);
         } else {
-          const account = await api.get(`/users/balance/${userDBInfs.userAccountId}`);
+          const account = await api.get(`/accounts/balance/${userDBInfs.userAccountId}`);
           const accountDBInfs: number = account.data.balance;
           setBalance(accountDBInfs);
         }
@@ -260,8 +260,12 @@ export default function Home() {
                 É para todas as idades!
               </h2>
               <div>
-                <Image src={googlePlay} alt="googleplay" />
-                <Image src={appStore} alt="appstore" />
+                <div>
+                  <a href='https://play.google.com/store/apps/details?id=com.neaglebank' target={'_blank'}><Image src={googlePlay} alt="googleplay" /></a>
+                </div>
+                <div>
+                  <a href='https://apps.apple.com/br/app/ng-cash/id1480105326' target={'_blank'}><Image src={appStore} alt="appstore" /></a>
+                </div>
               </div>
             </H.TextDiv>
             <H.ImgDiv>

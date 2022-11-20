@@ -5,17 +5,6 @@ import { authenticate } from "../plugins/authenticate";
 import { compare, hash } from "../services/hashManager";
 
 export async function usersRoutes(fastify: FastifyInstance) {
-  fastify.get(
-    "/users/all",
-    {
-      onRequest: [authenticate],
-    },
-    async (request, reply) => {
-      const allUsers = await prisma.users.findMany();
-
-      return reply.status(201).send(allUsers);
-    }
-  );
 
   fastify.post("/users", async (request, reply) => {
     const createUserBody = z.object({
@@ -78,80 +67,8 @@ export async function usersRoutes(fastify: FastifyInstance) {
     return reply.status(201).send(token);
   });
 
-  fastify.get(
-    "/users/balance/:accountId",
-    {
-      onRequest: [authenticate],
-    },
-    async (request, reply) => {
-      const getUserAccountParams = z.object({
-        accountId: z.string(),
-      });
 
-      const { accountId } = getUserAccountParams.parse(request.params);
-
-      const findUser = await prisma.users.findUnique({
-        where: {
-          accountId: accountId,
-        },
-      });
-
-      if (!findUser) {
-        return reply.status(400).send({
-          message: "Conta não encontrada",
-        });
-      }
-
-      const findAccounts = await prisma.accounts.findUnique({
-        select:{
-            balance: true
-        },
-        where: {
-          id: accountId,
-        },
-      });
-
-      return reply.status(201).send(findAccounts);
-    }
-  );
-
-  fastify.get(
-    "/users/balance/user/:userName",
-    {
-      onRequest: [authenticate],
-    },
-    async (request, reply) => {
-      const getUserAccountParams = z.object({
-        userName: z.string(),
-      });
-
-      const { userName } = getUserAccountParams.parse(request.params);
-
-      const findUser = await prisma.users.findUnique({
-        where: {
-          username: userName,
-        },
-      });
-
-      if (!findUser) {
-        return reply.status(400).send({
-          message: "Conta não encontrada",
-        });
-      }
-
-      const findAccounts = await prisma.accounts.findUnique({
-        select:{
-            balance: true
-        },
-        where: {
-          id: findUser.accountId,
-        },
-      });
-
-      return reply.status(201).send(findAccounts);
-    }
-  );
-
+  
   fastify.post("/users/login", async (request, reply) => {
     const createUserBody = z.object({
       username: z.string(),

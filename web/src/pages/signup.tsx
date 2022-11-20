@@ -14,7 +14,6 @@ import { useRouter } from 'next/router'
 export default function Signup() {
     const [logedIn, setLogedIn] = useState(false)
     const [inSignup, setInSignup] = useState(true)
-    const [loginVisible, setLoginVisible] = useState(false)
     const { formulario, onChange, limpaInputs } = useForm({ username: "", password: "" });
     const router = useRouter()
 

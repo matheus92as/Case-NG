@@ -9,6 +9,5 @@ export async function authRoutes(fastify: FastifyInstance) {
     }, async (request) => {
         return { user: request.user }
     })
-
-    
+      
 }

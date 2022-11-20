@@ -4,17 +4,6 @@ import { prisma } from "../lib/prisma";
 import { authenticate } from "../plugins/authenticate";
 
 export async function transactionsRoutes(fastify: FastifyInstance) {
-    fastify.get(
-        "/transactions/all",
-        {
-            onRequest: [authenticate],
-        },
-        async (request, reply) => {
-            const allTransactions = await prisma.transactions.findMany();
-
-            return reply.status(201).send(allTransactions);
-        }
-    );
 
     fastify.post(
         "/transactions/cash-out/:userName/:receiverName",
@@ -156,9 +145,6 @@ export async function transactionsRoutes(fastify: FastifyInstance) {
         }
     );
 
-    interface SortOrder {
-        order: string;
-    }
 
     fastify.get(
         "/transactions/cash-out/:userAccountId",
