@@ -126,6 +126,10 @@ Para dividir o teminal use o atalho Ctrl + Shift + 5 dentro do VS Code.
     $ npm run dev
 ```
 
+Como temos nosso próprio Backend, criei uma documentação pelo Postman para melhor entendimento das nossas requisições
+
+## [Documentação Postman](https://documenter.getpostman.com/view/20355515/2s8YmSsLZn)
+
 <br />
 
 ## FRONTEND
@@ -178,6 +182,7 @@ Estas foram algumas das técnologias utilizadas no projeto, caso precise de refe
 * [Axios](https://www.npmjs.com/package/axios) - Usada para consumo da nossa própia API.
 * [Styled Components](https://styled-components.com) - Para estilização do nosso Front.
 * [Moment](https://momentjs.com) - Biblioteca muito util para conversão de datas, utilizada para manipular dados vindos do Backend.
+
 
 </br>
 
