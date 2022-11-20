@@ -216,6 +216,8 @@ FRONTEND
 
 Para o front só me foram apresantadas informações basicas, nenhum layout pré-definido ou identidade visual base, então fui para o Figma e criei meu próprio esboço, utilizando referências como site da própria empresa e perfil de um de seus Designers.
 
+[Página da NG.Cash](https://ng.cash)
+
 [Fernando Doti - Designer da NG-CASH](https://fdoti.myportfolio.com/ng-cash-id)
 
 ## [Esboço no Figma](https://www.figma.com/file/wzlb2hCqmmHlxTffWR3cra/Untitled?node-id=0%3A1&t=iCee5qo8DI72xfe9-1)
