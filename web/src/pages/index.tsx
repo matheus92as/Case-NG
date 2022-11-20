@@ -261,10 +261,14 @@ export default function Home() {
               </h2>
               <div>
                 <div>
-                  <a href='https://play.google.com/store/apps/details?id=com.neaglebank' target={'_blank'}><Image src={googlePlay} alt="googleplay" /></a>
+                  <a href='https://play.google.com/store/apps/details?id=com.neaglebank' target={'_blank'} rel="noreferrer">
+                    <Image src={googlePlay} alt="googleplay" />
+                  </a>
                 </div>
                 <div>
-                  <a href='https://apps.apple.com/br/app/ng-cash/id1480105326' target={'_blank'}><Image src={appStore} alt="appstore" /></a>
+                  <a href='https://apps.apple.com/br/app/ng-cash/id1480105326' target={'_blank'} rel="noreferrer">
+                    <Image src={appStore} alt="appstore" />
+                  </a>
                 </div>
               </div>
             </H.TextDiv>
