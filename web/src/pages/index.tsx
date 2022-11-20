@@ -8,14 +8,16 @@ import googlePlay from '../assets/googleplay.png'
 import ButtonHeader from '../components/ButtonHeader'
 import openedYey from '../assets/Icone-olho-aberto.png'
 import closedYey from '../assets/Icone-olho-fechado.png'
-import { useEffect, useState } from 'react'
+import { FormEvent, useEffect, useState } from 'react'
 import ModalLogin from '../components/ModalLogin'
 import ButtonGeneric from '../components/ButtonGeneric'
 import { api } from '../lib/axios'
-
+import useForm from '../hooks/useForm'
+import moment from 'moment'
 
 
 export default function Home() {
+  const [update, setUpdate] = useState(false)
   const [logedIn, setLogedIn] = useState(false)
   const [inSignup, setInSignup] = useState(false)
   const [loginVisible, setLoginVisible] = useState(false)
@@ -27,11 +29,30 @@ export default function Home() {
   const [viewBalance, setViewBalance] = useState(true)
   const [viewTranfs, setViewTranfs] = useState(false)
   const [viewCardTranf, setCardViewTranfs] = useState(false)
+  const [viewIN, setViewIN] = useState(true)
+  const [viewOUT, setViewOUT] = useState(true)
+  const [inputValue, setInputValue] = useState('')
+  const [order, setOrder] = useState("desc")
+  const { formulario, onChange, limpaInputs } = useForm({ receiverName: "" });
 
-  // console.log(userInf);
-  // console.log(balance);
-  // console.log(logedIn);
-  // console.log(token);
+
+  function mascaraMoeda(event: any) {
+    const onlyDigits = event.target.value
+      .split("")
+      .filter((s:any)=> /\d/.test(s))
+      .join("")
+      .padStart(3, "0")
+    const digitsFloat = onlyDigits.slice(0, -2) + "." + onlyDigits.slice(-2)
+    event.target.value = maskCurrency(digitsFloat)
+    setInputValue(maskCurrency(digitsFloat))
+  }
+
+  function maskCurrency(valor: any, locale = 'pt-BR', currency = 'BRL') {
+    return new Intl.NumberFormat(locale, {
+      style: 'currency',
+      currency
+    }).format(valor)
+  }
 
   async function getUserInfs() {
     if (token !== '') {
@@ -40,27 +61,143 @@ export default function Home() {
         const user = await api.get('/me');
         const userDBInfs = user.data.user;
         setUserInf(userDBInfs);
-        console.log(userDBInfs);
 
-        const account = await api.get(`/users/balance/${userDBInfs.userAccountId}`);
-        const accountDBInfs: number = account.data.balance;
-        setBalance(accountDBInfs);
-        console.log(accountDBInfs);
+        if (userDBInfs.userAccountId === undefined) {
+          const account = await api.get(`/users/balance/user/${userDBInfs.username}`);
+          const accountDBInfs: number = account.data.balance;
+          setBalance(accountDBInfs);
+        } else {
+          const account = await api.get(`/users/balance/${userDBInfs.userAccountId}`);
+          const accountDBInfs: number = account.data.balance;
+          setBalance(accountDBInfs);
+        }
 
         const cashOut = await api.get(`/transactions/cash-out/${userDBInfs.userAccountId}`);
         const cashOutDBInfs = cashOut.data;
         setCashOutInf(cashOutDBInfs);
-        console.log(cashOutDBInfs);
 
         const cashIn = await api.get(`/transactions/cash-in/${userDBInfs.userAccountId}`);
         const cashInDBInfs = cashIn.data;
         setCashInInf(cashInDBInfs);
-        console.log(cashInDBInfs);
 
-      } catch (error) {
+      } catch (error: any) {
+        alert(error.response.data.message)
       }
     }
   }
+
+  async function makeTransfer(event: FormEvent) {
+    event.preventDefault()
+
+    const valueToCents = inputValue.replace(/[^\d]+/g, '')
+    const value: number = Number(valueToCents)
+
+    try {
+      api.defaults.headers.common['Authorization'] = `Bearer ${token}`
+      const response = await api.post(`/transactions/cash-out/${userInf.username}/${formulario.receiverName}`, { value: value });
+
+      alert(response.data);
+      limpaInputs();
+      setCardViewTranfs(false)
+      setUpdate(!update)
+
+    } catch (error: any) {
+      alert(error.response.data.message)
+    }
+  }
+
+  let allTransfs = cashOutInf.concat(cashInInf)
+  console.log(allTransfs);
+
+  interface Users {
+    username: string
+  }
+
+  interface Credited {
+    users: Users[]
+  }
+
+  interface Debited {
+    username: string
+  }
+
+  interface TransfInfs {
+    createdAt: Date
+    creditedAccountId: string
+    debitedAccountId: string
+    id: string
+    value: number
+    creditedAccount?: Credited
+    debitedAccount?: Debited
+  }
+
+  function sortFunction(a: any, b: any) {
+    var dateA = new Date(a.createdAt).getTime();
+    var dateB = new Date(b.createdAt).getTime();
+
+    let result = dateA < dateB
+
+    if (order === "asc") {
+      result = dateA > dateB
+    }
+
+    return (result) ? 1 : -1;
+  };
+
+  function checkView(transf: TransfInfs) {
+    let result
+
+    if ((viewIN === true) && (viewOUT === false)) {
+      result = transf.debitedAccount
+    } else if (viewIN === false && viewOUT === true) {
+      result = transf.creditedAccount
+    } else if (viewIN === true && viewOUT === true) {
+      result = transf
+    } else if (viewIN === false && viewOUT === false) {
+      result = undefined
+    }
+
+    return result
+  }
+
+  const cardsViagens = allTransfs
+    .sort(sortFunction)
+    .filter(checkView)
+    .map((transf: TransfInfs) => {
+      return (
+        <>
+          {transf.creditedAccount !== undefined ?
+            <div className='listItem'>
+              <div className='transfSymbol'>
+                OUT
+              </div>
+              <div className='nameStatus'>
+                <h2>{transf.creditedAccount && transf.creditedAccount.users[0].username}</h2>
+                <span>enviado</span>
+              </div>
+              <div className='dateValue'>
+                <h2>{moment(transf.createdAt).format("DD/MM/YYYY")}</h2>
+                <span>-R$ {(transf.value / 100).toFixed(2)}</span>
+              </div>
+            </div>
+            :
+            <div className='listItem'>
+              <div className='transfSymbol'>
+                IN
+              </div>
+              <div className='nameStatus'>
+                <h2>{transf.debitedAccount && transf.debitedAccount.username}</h2>
+                <span>recebido</span>
+              </div>
+              <div className='dateValue'>
+                <h2>{moment(transf.createdAt).format("DD/MM/YYYY")}</h2>
+                <span>R$ {(transf.value / 100).toFixed(2)}</span>
+              </div>
+            </div>
+          }
+        </>
+      )
+    })
 
   useEffect(() => {
     const localToken = localStorage.getItem("token");
@@ -81,7 +218,7 @@ export default function Home() {
     if (token !== '') {
       getUserInfs()
     };
-  }, [token])
+  }, [token, update])
 
   return (
     <H.MainContainer>
@@ -96,7 +233,6 @@ export default function Home() {
               <ButtonHeader
                 text='Login'
                 logedIn={logedIn}
-                setLogedIn={setLogedIn}
                 inSignup={inSignup}
                 loginVisible={loginVisible}
                 setLoginVisible={setLoginVisible} />
@@ -106,8 +242,6 @@ export default function Home() {
                 logedIn={logedIn}
                 setLogedIn={setLogedIn}
                 inSignup={inSignup}
-                loginVisible={loginVisible}
-                setLoginVisible={setLoginVisible}
               />
             }
           </H.Header>
@@ -117,7 +251,6 @@ export default function Home() {
               setLogedIn={setLogedIn}
               setLoginVisible={setLoginVisible}
             />}
-
           <H.Content>
             <H.TextDiv>
               <h1>
@@ -171,12 +304,12 @@ export default function Home() {
                       {viewBalance === true ?
                         <h1>R$<strong>{(balance / 100).toFixed(2)}</strong></h1>
                         :
-                        <h1>__  <strong>__.__</strong></h1>
+                        <h1>🙈<strong>🙈.🙈</strong></h1>
                       }
                     </H.Balance>
                     <H.StatusBottons>
                       <ButtonGeneric text='transferir' setCardViewTranfs={setCardViewTranfs} />
-                      <ButtonGeneric text='extrato' />
+                      <ButtonGeneric text='extrato' setViewTranfs={setViewTranfs} />
                     </H.StatusBottons>
                   </div>
                 </H.UserInfos>
@@ -189,32 +322,33 @@ export default function Home() {
                   <H.TransferCard id='transaction'>
                     <button className='close' onClick={() => setCardViewTranfs(false)}>X</button>
                     <h2>transferir ➜</h2>
-                    <form >
+                    <form onSubmit={makeTransfer}>
                       <label>valor:</label>
                       <input
+                        id='money'
+                        type='text'
+                        name='value'
+                        className="money form-control"
                         placeholder='R$ 00,0'
-                        // name='username'
-                        // type='text'
-                        // value={formulario.username}
-                        // onChange={onChange}
+                        value={inputValue}
+                        onInput={mascaraMoeda}
                         required
                       />
                       <label>para:</label>
                       <input
                         placeholder='usuário a receber'
-                        // name='password'
-                        // type='password'
-                        // value={formulario.password}
-                        // onChange={onChange}
+                        name='receiverName'
+                        type='text'
+                        value={formulario.receiverName}
+                        onChange={onChange}
                         required
                       />
                       <ButtonGeneric text='Confirmar' />
                     </form>
                   </H.TransferCard>
-                :
-                null
+                  : null
                 }
-                <H.CardTranfs>
+                <H.CardTranfs id='extract'>
                   <div className='viewTranfs' onClick={() => setViewTranfs(!viewTranfs)}>
                     {viewTranfs === true ?
                       <Image src={openedYey} alt='visible' />
@@ -225,35 +359,35 @@ export default function Home() {
                   <div className='cardHead'>
                     <h2>histórico de transações</h2>
                     <div className='inOut'>
-                      <button>IN</button>
+                      {viewIN === true ?
+                        <button onClick={() => setViewIN(!viewIN)}>IN</button>
+                        :
+                        <button className='halfOpacity' onClick={() => setViewIN(!viewIN)}>IN</button>
+                      }
                       /
-                      <button>OUT</button>
+                      {viewOUT === true ?
+                        <button onClick={() => setViewOUT(!viewOUT)}>OUT</button>
+                        :
+                        <button className='halfOpacity' onClick={() => setViewOUT(!viewOUT)}>OUT</button>
+                      }
                     </div>
                   </div>
                   {viewTranfs === true ?
-                    <div className='list'>
-                      <div className='listItem'>
-                        <div className='transfSymbol'>
-                          IN
-                        </div>
-                        <div className='nameStatus'>
-                          <h2> Jane Doe</h2>
-                          <span>enviado</span>
-                        </div>
-                        <div className='dateValue'>
-                          <h2>15/10/2022</h2>
-                          <span>-R$ 20,00</span>
-                        </div>
+                    <>
+                      {order === "desc" ?
+                        <p className='orderSet' onClick={() => setOrder("asc")}>🡣</p>
+                        :
+                        <p className='orderSet' onClick={() => setOrder("desc")}>🡡</p>}
+                      <div className='list'>
+                        {cardsViagens}
                       </div>
-                    </div>
-                    :
-                    null
+                    </>
+                    : null
                   }
                 </H.CardTranfs>
               </H.SecondSection>
             </>
-            :
-            null
+            : null
           }
         </>
       }

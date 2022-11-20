@@ -5,18 +5,16 @@ import * as B from '../styles/buttonHeaderStyle'
 interface Props {
   text: string
   logedIn: boolean
-  setLogedIn: Dispatch<SetStateAction<boolean>>
+  setLogedIn?: Dispatch<SetStateAction<boolean>>
   inSignup: boolean
-  loginVisible: boolean
-  setLoginVisible: Dispatch<SetStateAction<boolean>>
+  loginVisible?: boolean
+  setLoginVisible?: Dispatch<SetStateAction<boolean>>
 }
-
-
 
 const ButtonHeader = (props: Props) => {
   const logout = () =>{
     localStorage.removeItem("token")
-    props.setLogedIn(false)
+    props.setLogedIn && props.setLogedIn(false)
   }
 
   return (
@@ -29,7 +27,7 @@ const ButtonHeader = (props: Props) => {
             </Link>
           </B.MainContainer>
           :
-          <B.MainContainer onClick={() => props.setLoginVisible(true)}>
+          <B.MainContainer onClick={() => props.setLoginVisible && props.setLoginVisible(true)}>
             {props.text}
           </B.MainContainer>
         }

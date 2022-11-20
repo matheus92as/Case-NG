@@ -30,8 +30,8 @@ export default function Signup() {
             limpaInputs();
             router.push("/")
 
-        } catch (error) {
-            alert("Não foi possivel criar a conta")
+        } catch (error:any) {
+            alert(error.response.data.message)
 
         }
     }
@@ -47,10 +47,7 @@ export default function Signup() {
                     <ButtonHeader
                         text='Voltar'
                         logedIn={logedIn}
-                        setLogedIn={setLogedIn}
                         inSignup={inSignup}
-                        loginVisible={loginVisible}
-                        setLoginVisible={setLoginVisible}
                     />
                 </H.Header>
                 <H.Content>
@@ -66,6 +63,7 @@ export default function Signup() {
                                 placeholder='Nome de usuário(a)'
                                 name='username'
                                 type='text'
+                                minLength={3}
                                 value={formulario.username}
                                 onChange={onChange}
                                 required
@@ -74,6 +72,7 @@ export default function Signup() {
                                 placeholder='Senha'
                                 name='password'
                                 type='password'
+                                minLength={8}
                                 value={formulario.password}
                                 onChange={onChange}
                                 required

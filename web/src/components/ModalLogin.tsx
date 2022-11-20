@@ -35,8 +35,7 @@ const ModalLogin = (props: Props) => {
             props.setLogedIn(true)
 
         } catch (error) {
-            alert("Não foi possivel acessar a conta")
-            
+            alert("Não foi possivel acessar a conta")   
         }
     }
 

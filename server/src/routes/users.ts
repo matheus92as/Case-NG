@@ -31,7 +31,10 @@ export async function usersRoutes(fastify: FastifyInstance) {
       });
     }
 
-    if (password.length < 8) {
+    let regexPassword = /^(?=.*\d)(?=.*[A-Z])(?:([0-9A-Z])){8,}$/;
+    const verifyPassword = regexPassword.test(password)
+
+    if(verifyPassword === false){
       return reply.status(400).send({
         message:
           "Senha deve conter 8 caractéres ou mais, contendo números e ao menos uma letra maiúscula",
@@ -76,20 +79,20 @@ export async function usersRoutes(fastify: FastifyInstance) {
   });
 
   fastify.get(
-    "/users/balance/:id",
+    "/users/balance/:accountId",
     {
       onRequest: [authenticate],
     },
     async (request, reply) => {
       const getUserAccountParams = z.object({
-        id: z.string(),
+        accountId: z.string(),
       });
 
-      const { id } = getUserAccountParams.parse(request.params);
+      const { accountId } = getUserAccountParams.parse(request.params);
 
       const findUser = await prisma.users.findUnique({
         where: {
-          accountId: id,
+          accountId: accountId,
         },
       });
 
@@ -104,7 +107,44 @@ export async function usersRoutes(fastify: FastifyInstance) {
             balance: true
         },
         where: {
-          id: id,
+          id: accountId,
+        },
+      });
+
+      return reply.status(201).send(findAccounts);
+    }
+  );
+
+  fastify.get(
+    "/users/balance/user/:userName",
+    {
+      onRequest: [authenticate],
+    },
+    async (request, reply) => {
+      const getUserAccountParams = z.object({
+        userName: z.string(),
+      });
+
+      const { userName } = getUserAccountParams.parse(request.params);
+
+      const findUser = await prisma.users.findUnique({
+        where: {
+          username: userName,
+        },
+      });
+
+      if (!findUser) {
+        return reply.status(400).send({
+          message: "Conta não encontrada",
+        });
+      }
+
+      const findAccounts = await prisma.accounts.findUnique({
+        select:{
+            balance: true
+        },
+        where: {
+          id: findUser.accountId,
         },
       });
 

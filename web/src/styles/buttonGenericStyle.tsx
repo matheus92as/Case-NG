@@ -47,10 +47,6 @@ export const WhiteBG = styled.div`
         color: white;
         font-size: 28px;
         font-weight: bolder;
-        :target{
-            
-            scroll-margin-top: .8em;
-        }
         }
         div{
         width: 100%;

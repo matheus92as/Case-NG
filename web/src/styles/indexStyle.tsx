@@ -14,8 +14,7 @@ export const FirstSection = styled.section`
     height: 100vh;
     background: black;
     color: white;
-    position: relative;
-    
+    position: relative; 
 `
 
 export const BgLimit = styled.div`
@@ -23,8 +22,7 @@ export const BgLimit = styled.div`
     height: 100%;
     position: absolute;
     right: 0;
-    top: 0;
-    
+    top: 0;   
 `
 
 export const Header = styled.div`
@@ -106,6 +104,7 @@ export const UserInfos = styled.div`
     width: 90%;
     min-height: 500px;
     margin-top: 48px;
+    z-index: 2;
     .greetings{
         font-size: 64px;
         margin-left: 64px;
@@ -204,7 +203,7 @@ export const TransferCard = styled.div`
             border: 2px solid black;
             border-radius: 25px;
             background-color: white;
-            color: white;
+            color: black;
             font-size: 28px;
         }
     }
@@ -232,11 +231,19 @@ export const CardTranfs  = styled.div`
     width: 80%;
     min-height: 100px;
     margin-top: 64px;
+    margin-bottom: 128px;
     background-color: white;
     border: 2px solid black;
     border-radius: 35px;
     box-shadow: 10px 10px 1px black;
     position: relative;
+    .orderSet{
+        cursor: pointer;
+        font-size: 32px;
+        margin: 0;
+        margin-right: 16px;
+        align-self: flex-end;
+    }
     .viewTranfs{
         display: flex;
         justify-content: center;
@@ -245,9 +252,8 @@ export const CardTranfs  = styled.div`
         border-radius: 20px;
         background-color: white;
         position: absolute;
-        top: 2%;
-        right: 1%;
-        margin-bottom: 24px;
+        top: 10px;
+        right: 10px;
         z-index: 2;
         img{
             width: 60px;
@@ -268,7 +274,6 @@ export const CardTranfs  = styled.div`
         .inOut{
             min-width: 100px;
             min-height: 50px;
-            /* border: 2px solid black; */
             font-size: 32px;
             font-weight: bold;
             position: absolute;
@@ -278,6 +283,10 @@ export const CardTranfs  = styled.div`
                 font-size: 32px;
                 font-weight: bold; 
                 border: none;
+                background-color: inherit;
+            }
+            .halfOpacity{
+                opacity: 50%;
             }           
         }
     }
@@ -287,13 +296,11 @@ export const CardTranfs  = styled.div`
         flex-direction: column;
         align-items: center;
         padding-bottom: 48px;
-        border: 2px solid black;
         .listItem{
             display: flex;
             flex-direction: row;
             align-items: center;
             width: 100%;
-            border: 2px solid black;
             position: relative;
             p{
                 font-size: 28px;
@@ -320,7 +327,6 @@ export const CardTranfs  = styled.div`
                 flex-direction: column;
                 min-width: 100px;
                 margin-left: 12px;
-                /* border: 2px solid black; */
                 h2{
                     font-size: 32px;
                     margin-bottom: 16px;
@@ -337,7 +343,6 @@ export const CardTranfs  = styled.div`
                 margin-left: 12px;
                 position: absolute;
                 right: 0;
-                /* border: 2px solid black; */
                 h2{
                     font-size: 32px;
                     margin-bottom: 16px;
