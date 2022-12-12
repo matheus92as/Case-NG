@@ -6,7 +6,7 @@
 
 ## Projeto NG Cash
 
-Este projeto simula algumas funções de um banco digital, como criação de conta e transferências entre contas, também é possivel fazer controle de entradas e saidas dos valores transferidos e ver com quem foi feita a transação.
+Este projeto simula algumas funções de um banco digital, como criação de conta e transferências entre contas, também é possivel fazer controle de entradas e saídas dos valores transferidos e ver com quem foi feita a transação.
 
 <br />
 
@@ -72,7 +72,7 @@ Agora que temos nosso banco pronto é preciso criar a conexão dele com nossa ap
    # Entrar na pasta do Back
    $ cd server/
 
-   #Instalar bibliotecas já escritas no packaje.json
+   #Instalar bibliotecas já escritas no package.json
    $ npm i
 ```
 
@@ -147,14 +147,14 @@ Com nosso back rodando podemos acessar nosso banco de dados através das requis�
 Nossa aplicação Front já esta praticamente pronta, agora só precisamos fazer as intalações de dependencias assim como fizemos no back, estando dentro da nossa pasta web executamos nosso comando de instalação.
 
 ```bash
-   #Instalar bibliotecas já escritas no packaje.json
+   #Instalar bibliotecas já escritas no package.json
    $ npm i
 ```
 
 Então rodamos nosso comando para roda a pagina.
 
 ```bash
-    #Rodar aplicação Backend
+    #Rodar aplicação Frontend
     $ npm run dev
 ```
 
